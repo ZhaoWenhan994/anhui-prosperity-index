@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>安徽省月度生产与投资景气指数</title>
+<style>
+body { max-width: 1100px; margin: 32px auto; padding: 0 24px; color: #23313a; font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; line-height: 1.65; }
+h1 { color: #176b87; }
+h2 { border-bottom: 2px solid #d8e4e8; padding-bottom: 6px; }
+img { max-width: 100%; border: 1px solid #d8e4e8; margin: 8px 0 20px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; }
+th, td { border: 1px solid #d8e4e8; padding: 6px 9px; text-align: right; }
+th { background: #eef5f7; }
+.note { background: #fff5e6; border-left: 4px solid #c84b31; padding: 10px 14px; }
+</style>
+</head>
+<body>
+<h1>安徽省月度生产与投资景气指数</h1>
+<p>本报告基于国家统计局分省月度数据，使用主成分分析（PCA）构建综合景气指数，并对未来三个月进行短期预测。</p>
+
+<h2>样本与方法</h2>
+<ul>
+<li>原始样本期：2023-08-01 至 2026-07-01，共 36 个月。</li>
+<li>最新景气指数观测月：2026-06-01。</li>
+<li>主成分分析（PCA）输入：工业增加值同比、固定资产投资完成额累计增长、利润总额累计增长、发电量同比、工业生产者出厂价格指数（PPI）同比偏离值。</li>
+<li>指数基准：2024年平均值缩放为 100（使用 10 个月观测，该年度存在官方缺失）。</li>
+<li>指数幅度：将 PCA 得分的总体标准差映射为 10 个指数点，避免 PCA 得分均值接近 0 时产生失真的巨大指数。</li>
+<li>预测模型：季节性 ARIMA 模型（SARIMA）；同时保留 12 个月季节朴素基线。</li>
+</ul>
+
+<h2>核心指标走势</h2>
+<img src="figures/indicator_trends.png" alt="核心指标走势">
+
+<h2>主成分分析载荷（PCA）</h2>
+<img src="figures/pca_loadings.png" alt="PCA载荷">
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>指标</th>
+      <th>主成分分析载荷（PCA）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>工业增加值同比（%）</td>
+      <td>0.537625</td>
+    </tr>
+    <tr>
+      <td>固定资产投资累计同比（%）</td>
+      <td>-0.405142</td>
+    </tr>
+    <tr>
+      <td>利润总额累计同比（%）</td>
+      <td>0.487059</td>
+    </tr>
+    <tr>
+      <td>发电量同比（%）</td>
+      <td>0.077254</td>
+    </tr>
+    <tr>
+      <td>工业生产者出厂价格指数（PPI）同比偏离值（百分点）</td>
+      <td>0.551023</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>景气指数与预测</h2>
+<img src="figures/index_forecast.png" alt="景气指数预测">
+
+<h2>滚动验证</h2>
+<p>以下是模型与季节性朴素基线的误差对比。平均绝对误差（MAE）和均方根误差（RMSE）越小，表示预测误差越小。</p>
+<table class="dataframe metrics">
+  <thead>
+    <tr style="text-align: right;">
+      <th>模型</th>
+      <th>预测期限（月）</th>
+      <th>平均绝对误差（MAE）</th>
+      <th>均方根误差（RMSE）</th>
+      <th>预测点数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>季节性 ARIMA 模型（SARIMA）</td>
+      <td>1</td>
+      <td>3.830117</td>
+      <td>4.617937</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>季节性 ARIMA 模型（SARIMA）</td>
+      <td>2</td>
+      <td>4.943663</td>
+      <td>6.491941</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <td>季节性 ARIMA 模型（SARIMA）</td>
+      <td>3</td>
+      <td>5.992436</td>
+      <td>8.124920</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <td>12个月季节朴素</td>
+      <td>1</td>
+      <td>9.931766</td>
+      <td>14.953091</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>12个月季节朴素</td>
+      <td>2</td>
+      <td>9.363702</td>
+      <td>13.990607</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <td>12个月季节朴素</td>
+      <td>3</td>
+      <td>8.591356</td>
+      <td>12.827454</td>
+      <td>42</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>辅助指标</h2>
+<img src="figures/context.png" alt="辅助指标可用性说明">
+
+<div class="note"><strong>解释限制：</strong>固定资产投资和利润使用累计增速（官方口径），不能直接解释为当月增速；样本长度较短，预测结果只适合作为方法展示和短期参考，不应视为确定性判断。</div>
+</body>
+</html>

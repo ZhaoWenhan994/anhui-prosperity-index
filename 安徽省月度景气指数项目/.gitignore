@@ -1,0 +1,7 @@
+.worktrees/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+data/raw/*.xlsx
+!data/raw/provincial_monthly_anhui_2023-08_2026-07.xlsx
